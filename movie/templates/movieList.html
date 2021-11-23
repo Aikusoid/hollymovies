@@ -1,12 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Movie List</title>
-</head>
-<body>
-    <h1>HollyMovies - Movie list</h1>
-    <table>
+{% extends 'base.html' %}
+{% load static %}
+
+{% block current_tab %} Movie list {% endblock current_tab %}
+{% block link %}<a href="{% url 'homepage' %}">Homepage</a>{% endblock link %}
+{% block body %}
+    <table class="mt-5 table">
         <tr>
             <th>Name</th>
             <th>Likes</th>
@@ -22,5 +20,4 @@
         </tr>
         {% endfor %}
     </table>
-</body>
-</html>
+{% endblock body %}
