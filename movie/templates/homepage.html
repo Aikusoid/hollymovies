@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Homepage</title>
+</head>
+<body>
+    <h1>Welcome in HollyMovies app!</h1>
+    <h3><a href="{% url 'movie-list' %}">All movies</a></h3>
+    <hr />
+    <h3>Statistics:</h3>
+    <p>Number of movies - {{ number_of_movies }}</p>
+    <p>Number of genres - {{ number_of_genres }}</p>
+    <p>Most liked movie - {{ most_liked_movie }} <strong>Likes: </strong>{{ most_liked_movie.likes }}</p>
+    <p>Best rated movie - {{ best_rated_movie }} <strong>Rating: </strong>{{ best_rated_movie.rating }}</p>
+</body>
+</html>
