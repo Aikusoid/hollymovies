@@ -1,11 +1,26 @@
 {% extends 'base.html'%}
+{% load custom_tags %}
 
 {% block current_tab %} Movie detail - {{ movie.name }} {% endblock current_tab %}
 
 {% block body %}
-    <p>name: {{ movie.name }}</p>
-    <p>description: {{ movie.description }}</p>
-    <p>genre: <a href="{% url 'genre-detail' movie.pk %}">{{ movie.genre.name }}</a></p>
-    <p>rating: {{ movie.rating }}</p>
-    <p>likes: {{ movie.likes }}</p>
+    <p><strong>Name:</strong> <em>{{ movie.name }}</em></p>
+    <p><strong>Description:</strong> <em>{{ movie.description }}</em></p>
+    <p><strong>Genre:</strong> <a href="{% url 'genre-detail' movie.genre.pk %}">{{ movie.genre.name }}</a></p>
+    <p><strong>Rating:</strong> {{ movie.rating }}</p>
+    <p><strong>Likes:</strong> {{ movie.likes }}</p>
+
+    {% movie_director_table %}
+    {% movie_actor_table %}
+
+    <p class="text-{% if already_liked %}danger{% else %}primary{% endif %}">
+        {% can_like_message %}
+    </p>
+
+    {% if request.user.is_authenticated %}
+        <form action="{% url 'movie-detail' movie.pk %}" method="post">
+            {% csrf_token %}
+            <input type="submit" value="like" class="btn btn-success"/>
+        </form>
+    {% endif %}
 {% endblock body %}

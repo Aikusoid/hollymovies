@@ -12,8 +12,16 @@
     <h1>HollyMovies - {% block current_tab %}{% endblock current_tab %}</h1>
     <h5 class="mt-5 links"><a href="{% url 'homepage' %}">Home</a></h5>
     <h5><a href="{% url 'movie-list' %}">All movies</a> </h5>
+    <h5><a href="{% url 'genre-list' %}">All genres</a> </h5>
     <h5><a href="{% url 'data-types-testing' %}"> Data types in templates</a> </h5>
     <hr />
+
+    {% if request.user.is_superuser %}
+        <h5><a href="{% url 'admin:index' %}">Admin</a></h5>
+
+
+    {% endif %}
+
     {% if request.user.is_authenticated %}
         <h3>Username: {{ request.user.username }}</h3>
     {% else %}
