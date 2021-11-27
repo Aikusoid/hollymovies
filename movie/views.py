@@ -58,6 +58,28 @@ def genre_detail_view(request, pk):
     return TemplateResponse(request, 'genreDetail.html', context=context)
 
 
+def actor_list_view(request):
+    return TemplateResponse(request, 'actorList.html')
+
+
+def director_list_view(request):
+    return TemplateResponse(request, 'directorList.html')
+
+
+def director_detail_view(request, pk):
+    context = {
+        'director': get_object_or_404(Director, pk=pk),
+    }
+    return TemplateResponse(request, 'directorDetail.html', context=context)
+
+
+def actor_detail_view(request, pk):
+    context = {
+        'actor': get_object_or_404(Actor, pk=pk),
+    }
+    return TemplateResponse(request, 'actorDetail.html', context=context)
+
+
 def testing_cheatsheet_view(request):
     # python list[0]
     # template language jinja2 list.0

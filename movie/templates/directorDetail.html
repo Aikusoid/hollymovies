@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block current_tab %}Director's Detail - {{ actor.full_name }}{% endblock current_tab %}
+
+{% block body %}
+    <p><strong>First name:</strong> <em>{{ director.first_name }}</em></p>
+    <p><strong>Last name:</strong> <em>{{ director.last_name }}</em></p>
+    <p><strong>Age:</strong> {{ director.age }}</p>
+    <table class='table'>
+    {% if table_head %}
+        <h5 class="mt-4">{{ table_head }}</h5>
+    {% endif %}
+    <tr>
+        <th>Name</th>
+        <th>Likes</th>
+    </tr>
+{% for movie in director.movies.all %}
+    <tr>
+        <td><a href="{% url 'movie-detail' movie.pk%}">{{ movie.name }}</a></td>
+        <td>{{ movie.likes }}</td>
+    </tr>
+{% endfor %}
+{% endblock body %}

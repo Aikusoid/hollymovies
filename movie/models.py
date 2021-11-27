@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 from django.db import models
+from django.shortcuts import reverse
 from django.core.validators import MaxValueValidator, MinValueValidator
 
 
@@ -39,11 +40,6 @@ class Movie(BaseModel):
     genre = models.ForeignKey(Genre, on_delete=models.SET_NULL, null=True, related_name='movie')
 
 
-class MovieLikeRegister(BaseModel):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
-
-
 class Person(BaseModel):
     first_name = models.CharField(max_length=256)
     last_name = models.CharField(max_length=256)
@@ -55,12 +51,26 @@ class Person(BaseModel):
     def __str__(self):
         return f'{self.first_name} {self.last_name}: {self.pk}'
 
+    @property
+    def full_name(self):
+        return f'{self.first_name} {self.last_name}'
+
 
 class Actor(Person):
     movies = models.ManyToManyField(Movie, related_name='actors')
+
+    def get_detail_url(self):
+        return reverse('actor-detail', args=[self.pk])
 
 
 class Director(Person):
     movies = models.ManyToManyField(Movie, related_name='directors')
 
+    def get_detail_url(self):
+        return reverse('director-detail', args=[self.pk])
+
+
+class MovieLikeRegister(BaseModel):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
 

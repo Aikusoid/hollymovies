@@ -1,13 +1,15 @@
 <table class='table'>
+    {% if table_head %}
         <h5 class="mt-4">{{ table_head }}</h5>
-        <tr>
-            <th>Name</th>
-            <th>Age</th>
-        </tr>
-    {% for person in people %}
-        <tr>
-            <td><a href="#">{{ person.first_name }} {{ person.last_name }}</a></td>
-            <td>{{ person.age }}</td>
-        </tr>
-    {% endfor %}
+    {% endif %}
+    <tr>
+        <th>Name</th>
+        <th>Age</th>
+    </tr>
+{% for person in people %}
+    <tr>
+        <td><a href="{{ person.get_detail_url }}">{{ person.full_name }}</a></td>
+        <td>{{ person.age }}</td>
+    </tr>
+{% endfor %}
 </table>

@@ -10,8 +10,8 @@
     <p><strong>Rating:</strong> {{ movie.rating }}</p>
     <p><strong>Likes:</strong> {{ movie.likes }}</p>
 
-    {% movie_director_table %}
     {% movie_actor_table %}
+    {% movie_director_table %}
 
     <p class="text-{% if already_liked %}danger{% else %}primary{% endif %}">
         {% can_like_message %}
