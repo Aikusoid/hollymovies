@@ -2,7 +2,6 @@
 {% load static %}
 
 {% block current_tab %} Movie list {% endblock current_tab %}
-{% block link %}<a href="{% url 'homepage' %}">Homepage</a>{% endblock link %}
 {% block body %}
     <table class="mt-5 table">
         <tr>
@@ -13,7 +12,7 @@
         </tr>
         {% for movie in movies %}
         <tr>
-            <td>{{ movie.name }}</td>
+            <td><a href="{% url 'movie-detail' movie.pk %}">{{ movie.name }}</a></td>
             <td>{{ movie.likes }}</td>
             <td>{{ movie.rating }}</td>
             <td>{{ movie.genre }}</td>

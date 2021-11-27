@@ -2,7 +2,6 @@
 {% load static %}
 
 {% block current_tab %} Homepage {% endblock current_tab %}
-{% block link %}<a href="{% url 'movie-list' %}">All movies</a>{% endblock link %}
 {% block body %}
     <h3 class="mt-5">Statistics:</h3>
     <p>Number of movies - {{ number_of_movies }}</p>
