@@ -5,7 +5,7 @@ from django.views import View
 from django.views.generic import ListView, TemplateView
 from django.views.generic.detail import SingleObjectTemplateResponseMixin, BaseDetailView, DetailView
 
-from movie.models import Movie, Genre, MovieLikeRegister, Actor, Director
+from movie.models import Movie, Genre, MovieLikeRegister, Actor, Director, Cinema, CinemaMovieShowings
 
 
 def homepage_view(request):
@@ -201,3 +201,31 @@ class TestingCheatSheetView(TemplateView):
             'key2': 'value2',
         }
     }
+
+
+class CinemaListView(ListView):
+    model = Cinema
+    template_name = 'cinemaList.html'
+
+
+class CinemaDetailView(DetailView):
+    model = Cinema
+    template_name = 'cinemaDetail.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(CinemaDetailView, self).get_context_data(**kwargs)
+        showings = self.object.showings.all()
+
+        active_showings = []
+
+        for showing in showings:
+            if showing.closed:
+                continue
+            elif showing.sold_out:
+                continue
+            active_showings.append(showing)
+
+        context.update({
+            'showings': active_showings
+        })
+        return context

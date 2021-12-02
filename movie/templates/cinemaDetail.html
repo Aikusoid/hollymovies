@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block current_tab %}Cinema Detail{% endblock current_tab %}
+
+{% block body %}
+    <p><strong>Cinema:</strong> {{ object.name }}</p>
+    <p><strong>Location:</strong> {{ object.location }}</p>
+
+    <table class="table">
+        <h4>Available showings</h4>
+        <tr>
+            <th>Movie</th>
+            <th>Starts at</th>
+            <th>Available tickets</th>
+            <th>Duration (minutes)</th>
+        </tr>
+        {% for showing in showings %}
+            <tr>
+                <td><a href="{% url 'movie-detail' showing.movie.pk %}">{{ showing.movie.name }}</a></td>
+                <td>{{ showing.showing_time }}</td>
+                <td>{{ showing.duration }}</td>
+                <td>{{ showing.available_tickets }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}
