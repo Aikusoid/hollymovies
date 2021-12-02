@@ -19,13 +19,13 @@ def homepage_view(request):
     }
     return TemplateResponse(request, 'homepage.html', context=context)
 
-
 # def movie_list_view(request):
 #     context = {
 #         'movies': Movie.objects.all().order_by('-likes', '-rating'),
 #
 #     }
 #     return TemplateResponse(request, 'movieList.html', context=context)
+
 
 class MovieListView(ListView):
     # def get(self, request, *args, **kwargs):
@@ -36,12 +36,12 @@ class MovieListView(ListView):
     queryset = Movie.objects.all().order_by('-likes', '-rating')
     template_name = 'movieList.html'
 
-
 # def genre_list_view(request):
 #     context = {
 #         'genres': Genre.objects.all(),
 #     }
 #     return TemplateResponse(request, 'genreList.html', context=context)
+
 
 class GenreListView(View):
     http_method_names = ['get', ]
@@ -52,20 +52,19 @@ class GenreListView(View):
         }
         return TemplateResponse(request, 'genreList.html', context=context)
 
-
 # def actor_list_view(request):
 #     return TemplateResponse(request, 'actorList.html')
+
 
 class ActorListView(TemplateView):
     template_name = 'actorList.html'
 
-
 # def director_list_view(request):
 #     return TemplateResponse(request, 'directorList.html')
 
+
 class DirectorListView(TemplateView):
     template_name = 'directorList.html'
-
 
 # def movie_detail_view(request, pk):
 #     movie = get_object_or_404(Movie, pk=pk)
@@ -123,46 +122,82 @@ class MovieDetailView(DetailView):
             )
             return self.get(request, *args, **kwargs)
 
-
-def genre_detail_view(request, pk):
-    context = {
-        'genre': get_object_or_404(Genre, pk=pk),
-    }
-    return TemplateResponse(request, 'genreDetail.html', context=context)
-
-
-def director_detail_view(request, pk):
-    context = {
-        'director': get_object_or_404(Director, pk=pk),
-    }
-    return TemplateResponse(request, 'directorDetail.html', context=context)
+# def genre_detail_view(request, pk):
+#     context = {
+#         'genre': get_object_or_404(Genre, pk=pk),
+#     }
+#     return TemplateResponse(request, 'genreDetail.html', context=context)
 
 
-def actor_detail_view(request, pk):
-    context = {
-        'actor': get_object_or_404(Actor, pk=pk),
-    }
-    return TemplateResponse(request, 'actorDetail.html', context=context)
+class GenreDetailView(DetailView):
+    model = Genre
+    template_name = 'genreDetail.html'
+
+# def director_detail_view(request, pk):
+#     context = {
+#         'director': get_object_or_404(Director, pk=pk),
+#     }
+#     return TemplateResponse(request, 'directorDetail.html', context=context)
 
 
-def dislike_movie_view(request, pk):
-    movie = get_object_or_404(Movie, pk=pk)
-    movie.dislikes += 1
-    movie.save(update_fields=['dislikes'])
-    return redirect('movie-detail', pk=pk)
+class DirectorDetailView(DetailView):
+    model = Director
+    template_name = 'directorDetail.html'
+
+# def actor_detail_view(request, pk):
+#     context = {
+#         'actor': get_object_or_404(Actor, pk=pk),
+#     }
+#     return TemplateResponse(request, 'actorDetail.html', context=context)
 
 
-def testing_cheatsheet_view(request):
+class ActorDetailView(DetailView):
+    model = Actor
+    template_name = 'actorDetail.html'
+
+# def dislike_movie_view(request, pk):
+#     movie = get_object_or_404(Movie, pk=pk)
+#     movie.dislikes += 1
+#     movie.save(update_fields=['dislikes'])
+#     return redirect('movie-detail', pk=pk)
+
+
+class DislikeMovieView(DetailView):
+    def get(self, request, *args, **kwargs):
+        pk = kwargs['pk']
+        movie = get_object_or_404(Movie, pk=pk)
+        movie.dislikes += 1
+        movie.save(update_fields=['dislikes'])
+        return redirect('movie-detail', pk=pk)
+
+# def testing_cheatsheet_view(request):
+#     # python list[0]
+#     # template language jinja2 list.0
+#
+#     # python dict['key']
+#     # template language jinja2 dict.key
+#     context = {
+#         'list': ['index0', 'index1'],
+#         'dict': {
+#             'key': 'value',
+#             'key2': 'value2',
+#         }
+#     }
+#     return TemplateResponse(request, 'dataTypesTesting.html', context=context)
+
+
+class TestingCheatSheetView(TemplateView):
+    template_name = 'dataTypesTesting.html'
+
     # python list[0]
     # template language jinja2 list.0
 
     # python dict['key']
     # template language jinja2 dict.key
-    context = {
+    extra_context = {
         'list': ['index0', 'index1'],
         'dict': {
             'key': 'value',
             'key2': 'value2',
         }
     }
-    return TemplateResponse(request, 'dataTypesTesting.html', context=context)
