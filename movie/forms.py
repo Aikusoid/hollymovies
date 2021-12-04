@@ -25,3 +25,4 @@ class DummyForm(forms.Form):
     movie = forms.ModelChoiceField(queryset=Movie.objects.all())
     movies = forms.ModelMultipleChoiceField(queryset=Movie.objects.all())
     difficulty = forms.ChoiceField(choices=DIFFICULTY_CHOICES)
+
