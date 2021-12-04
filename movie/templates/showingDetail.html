@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block current_tab %}Showing Detail{% endblock current_tab %}
+
+{% block body %}
+    <table class="table">
+        <tr>
+            <th>Movie</th>
+            <th>Starts at</th>
+            <th>Duration (minutes)</th>
+            <th>Available tickets</th>
+            <th>Ticket price</th>
+            <th>Buy</th>
+        </tr>
+        <tr>
+            <td><a href="{% url 'movie-detail' object.movie.pk %}">{{ object.movie.name }}</a></td>
+            <td>{{ object.showing_time }}</td>
+            <td>{{ object.duration }}</td>
+            <td>{{ object.available_tickets }}</td>
+            <td>{{ object.ticket_price }}</td>
+            {% if request.user.is_authenticated %}
+            <td>
+                <form action="{% url 'showing-detail' object.pk %}" method="post">
+                    {% csrf_token %}
+                <input type="submit" class="btn btn-success" value="Buy">
+                </form>
+            </td>
+            {% endif %}
+        </tr>
+    </table>
+{% endblock body %}

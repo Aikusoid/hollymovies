@@ -17,7 +17,7 @@
         </tr>
         {% for showing in showings %}
             <tr>
-                <td><a href="{% url 'movie-detail' showing.movie.pk %}">{{ showing.movie.name }}</a></td>
+                <td><a href="{% url 'showing-detail' showing.movie.pk %}">{{ showing.movie.name }}</a></td>
                 <td>{{ showing.showing_time }}</td>
                 <td>{{ showing.duration }}</td>
                 <td>{{ showing.available_tickets }}</td>

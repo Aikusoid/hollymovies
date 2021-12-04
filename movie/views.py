@@ -1,3 +1,4 @@
+from django.forms import Form
 from django.shortcuts import render, resolve_url, get_object_or_404, redirect
 from django.http import HttpResponse
 from django.template.response import TemplateResponse
@@ -5,6 +6,7 @@ from django.views import View
 from django.views.generic import ListView, TemplateView
 from django.views.generic.detail import SingleObjectTemplateResponseMixin, BaseDetailView, DetailView
 
+from movie.forms import DummyForm
 from movie.models import Movie, Genre, MovieLikeRegister, Actor, Director, Cinema, CinemaMovieShowings
 
 
@@ -229,3 +231,36 @@ class CinemaDetailView(DetailView):
             'showings': active_showings
         })
         return context
+
+
+class ShowingDetailView(DetailView):
+    model = CinemaMovieShowings
+    template_name = 'showingDetail.html'
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        self.object.sold_tickets += 1
+        self.object.save(update_fields=['sold_tickets', ])
+        return self.get(request, *args, *kwargs)
+
+
+class DummyFormView(View):
+
+    def get(self, request, *args, **kwargs):
+        context = {
+            'form': DummyForm()
+        }
+        return TemplateResponse(request, 'dummy_forms.html', context=context)
+
+    def post(self, request, *args, **kwargs):
+        bounded_form = DummyForm(data=request.POST)
+
+        if not bounded_form.is_valid():
+            context = {'form': bounded_form}
+            return TemplateResponse(request, 'dummy_forms.html', context=context)
+
+        int_field = bounded_form.cleaned_data['int_field']
+        username = bounded_form.cleaned_data['username']
+        print(int_field)
+        print(username)
+        return self.get(request, *args, **kwargs)
