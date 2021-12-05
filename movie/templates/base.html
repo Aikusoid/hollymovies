@@ -10,26 +10,28 @@
 <body>
 <div class="container">
     <h1>HollyMovies - {% block current_tab %}{% endblock current_tab %}</h1>
-    <h5 class="mt-5 links"><a href="{% url 'homepage' %}">Home</a></h5>
-    <h5><a href="{% url 'cinema-list' %}">All cinemas</a></h5>
-    <h5><a href="{% url 'movie-list' %}">All movies</a></h5>
-    <h5><a href="{% url 'genre-list' %}">All genres</a></h5>
-    <h5><a href="{% url 'actor-list' %}"> All actors</a></h5>
-    <h5><a href="{% url 'director-list' %}"> All directors</a></h5>
-    <h5><a href="{% url 'data-types-testing' %}"> Data types in templates</a></h5>
-    <h5><a href="{% url 'dummy-form' %}">Dummy forms testing</a></h5>
+    <h4 class="pt-3">Application pages</h4>
+    <h5 class="links"><a href="{% url 'homepage' %}">Home</a></h5>
+    <h5 class="links"><a href="{% url 'cinema-list' %}">All cinemas</a></h5>
+    <h5 class="links"><a href="{% url 'movie-list' %}">All movies</a></h5>
+    <h5 class="links"><a href="{% url 'genre-list' %}">All genres</a></h5>
+    <h5 class="links"><a href="{% url 'actor-list' %}"> All actors</a></h5>
+    <h5 class="links"><a href="{% url 'director-list' %}"> All directors</a></h5>
+    <h5 class="links"><a href="{% url 'create-movie' %}">Create Movie</a></h5>
+    <h5 class="links"><a href="{% url 'create-actor' %}">Create Actor</a></h5>
+    <h4 class="pt-3">Dummy testing pages</h4>
+    <h5 class="links"><a href="{% url 'data-types-testing' %}"> Data types in templates</a></h5>
+    <h5 class="links"><a href="{% url 'dummy-form' %}">Dummy forms testing</a></h5>
     <hr />
 
-    {% if request.user.is_superuser %}
-        <h5><a href="{% url 'admin:index' %}">Admin</a></h5>
-
-
-    {% endif %}
-
     {% if request.user.is_authenticated %}
-        <h3>Username: {{ request.user.username }}</h3>
+        {% if request.user.is_superuser %}
+            <h5 class="links">Username: <a href="{% url 'admin:index' %}">Admin</a></h5>
+        {% else %}
+            <h5>Username: {{ request.user.username }}</h5>
+        {% endif %}
     {% else %}
-        <h3>login</h3>
+        <h5>login</h5>
     {% endif %}
     {% block body %}
     {% endblock body %}

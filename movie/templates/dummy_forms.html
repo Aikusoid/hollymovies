@@ -9,7 +9,7 @@
 <body>
 
 <div class="container">
-    <form action="{% url 'dummy-form' %}" method="POST" class="mt-5">
+    <form action="{% url 'dummy-form' %}" method="POST" class="mt-5 d-flex flex-column justify-content-between">
         <h1>Form explicit</h1>
         {% csrf_token %}
         {{ form.int_field.label }}: {{ form.int_field }} {{ form.int_field.errors }}
@@ -41,7 +41,7 @@
         {{ form.as_ul }}
     </form>
 
-    <form action="{% url 'dummy-form' %}" method="POST" class="mt-5">
+    <form action="{% url 'dummy-form' %}" method="POST" class="mt-5 d-flex flex-column justify-content-between">
         <h1>Form default</h1>
         {% csrf_token %}
         {{ form}}

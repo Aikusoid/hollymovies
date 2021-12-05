@@ -1,12 +1,13 @@
 from django.forms import Form
-from django.shortcuts import render, resolve_url, get_object_or_404, redirect
+from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse
+from django.urls import reverse_lazy, reverse
 from django.template.response import TemplateResponse
 from django.views import View
-from django.views.generic import ListView, TemplateView
+from django.views.generic import ListView, TemplateView, FormView, CreateView, UpdateView
 from django.views.generic.detail import SingleObjectTemplateResponseMixin, BaseDetailView, DetailView
 
-from movie.forms import DummyForm
+from movie.forms import DummyForm, MovieForm, ActorForm
 from movie.models import Movie, Genre, MovieLikeRegister, Actor, Director, Cinema, CinemaMovieShowings
 
 
@@ -244,28 +245,23 @@ class ShowingDetailView(DetailView):
         return self.get(request, *args, *kwargs)
 
 
-class DummyFormView(View):
+class DummyFormView(FormView):
+    form_class = DummyForm
+    template_name = 'dummy_forms.html'
+    success_url = reverse_lazy('dummy-form')
+    initial = {'username': 'Honza'}
 
-    def get(self, request, *args, **kwargs):
-        context = {
-            'form': DummyForm()
-        }
-        return TemplateResponse(request, 'dummy_forms.html', context=context)
-
-    def post(self, request, *args, **kwargs):
-        bounded_form = DummyForm(data=request.POST)
-
-        if not bounded_form.is_valid():
-            context = {'form': bounded_form}
-            return TemplateResponse(request, 'dummy_forms.html', context=context)
-
-        int_field = bounded_form.cleaned_data['int_field']
-        username = bounded_form.cleaned_data['username']
-        email = bounded_form.cleaned_data['email']
-        datetime_test = bounded_form.cleaned_data['datetime_test']
-        movie = bounded_form.cleaned_data['movie']
-        movies = bounded_form.cleaned_data['movies']
-        difficulty = bounded_form.cleaned_data['difficulty']
+    def get_form_class(self, form_class=None):
+        return DummyForm(10, **self.get_form_kwargs())
+    
+    def form_valid(self, form):
+        int_field = form.cleaned_data['int_field']
+        username = form.cleaned_data['username']
+        email = form.cleaned_data['email']
+        datetime_test = form.cleaned_data['datetime_test']
+        movie = form.cleaned_data['movie']
+        movies = form.cleaned_data['movies']
+        difficulty = form.cleaned_data['difficulty']
         print(int_field)
         print(username)
         print(email)
@@ -273,4 +269,65 @@ class DummyFormView(View):
         print(movie)
         print(movies)
         print(difficulty)
-        return self.get(request, *args, **kwargs)
+        
+        return super(DummyFormView, self).form_valid(form)
+
+    def form_invalid(self, form):
+        print('Form is invalid!')
+        return super(DummyFormView, self).form_invalid(form)
+
+# class DummyFormView(View):
+# 
+#     def get(self, request, *args, **kwargs):
+#         context = {
+#             'form': DummyForm()
+#         }
+#         return TemplateResponse(request, 'dummy_forms.html', context=context)
+# 
+#     def post(self, request, *args, **kwargs):
+#         bounded_form = DummyForm(data=request.POST)
+# 
+#         if not bounded_form.is_valid():
+#             context = {'form': bounded_form}
+#             return TemplateResponse(request, 'dummy_forms.html', context=context)
+# 
+#         int_field = bounded_form.cleaned_data['int_field']
+#         username = bounded_form.cleaned_data['username']
+#         email = bounded_form.cleaned_data['email']
+#         datetime_test = bounded_form.cleaned_data['datetime_test']
+#         movie = bounded_form.cleaned_data['movie']
+#         movies = bounded_form.cleaned_data['movies']
+#         difficulty = bounded_form.cleaned_data['difficulty']
+#         print(int_field)
+#         print(username)
+#         print(email)
+#         print(datetime_test)
+#         print(movie)
+#         print(movies)
+#         print(difficulty)
+#         return self.get(request, *args, **kwargs)
+
+
+class CreateMovieView(CreateView):
+    template_name = 'createMovie.html'
+    form_class = MovieForm
+
+    def get_success_url(self):
+        return reverse('movie-detail', args=[self.object.id])
+
+
+class UpdateMovieView(UpdateView):
+    template_name = 'movieUpdate.html'
+    form_class = MovieForm
+    model = Movie
+
+    def get_success_url(self):
+        return reverse('movie-detail', args=[self.object.id])
+
+
+class CreateActorView(CreateView):
+    template_name = 'createActor.html'
+    form_class = ActorForm
+
+    def get_success_url(self):
+        return reverse('actor-detail', args=[self.object.id])
