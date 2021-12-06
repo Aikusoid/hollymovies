@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block current_tab %} Movie list {% endblock current_tab %}
+{% block body %}
+    <div class="w-75 m-auto">
+    <table class="mt-5 table table-striped table-hover">
+        <tr>
+            <th>Name</th>
+            <th class="text-center">Likes</th>
+            <th class="text-center">Rating</th>
+            <th class="text-center">Genre</th>
+        </tr>
+        {% for movie in object_list %}
+        <tr>
+            <td><a href="{% url 'movie:detail' movie.pk %}">{{ movie.name }}</a></td>
+            <td class="text-center">{{ movie.likes }}</td>
+            <td class="text-center">{{ movie.rating }}</td>
+            <td class="text-center">{{ movie.genre }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    </div>
+{% endblock body %}

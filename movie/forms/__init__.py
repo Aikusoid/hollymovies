@@ -1,41 +1,15 @@
 from django import forms
-from django.core.exceptions import ValidationError
-from django.forms import EmailInput
 
-from movie.models import Movie, Genre, Actor
-
-
-class CustomDatetimeInput(forms.DateTimeInput):
-    input_type = 'date'
-
-
-DIFFICULTY_CHOICES = (
-    (1, 'Easy'),
-    (2, 'Medium'),
-    (3, 'Hard'),
-    (4, 'Insane'),
-)
-
-
-def validate_username_is_not_aigerim(value):
-    if value == 'Aigerim':
-        raise ValidationError("Username cannot be 'Aigerim'")
-
-
-def validate_capitalized(value):
-    if value[0].islower():
-        raise ValidationError('First letter must be uppercase')
-
-
-class BootstrapEmailWidget(EmailInput):
-    def __init__(self, attrs={}):
-        attrs.update({'class': 'form-control'})
-        super(BootstrapEmailWidget, self).__init__(attrs=attrs)
+from movie import choices
+from movie.forms.validators import validate_capitalized, validate_username_is_not_aigerim
+from movie.forms.widgets import CustomDatetimeInput, BootstrapEmailWidget
+from movie.models import Movie, Actor
 
 
 class DummyForm(forms.Form):
     int_field = forms.IntegerField(required=False, min_value=5, max_value=10)
-    username = forms.CharField(validators=[validate_username_is_not_aigerim], required=False, empty_value='unknown',
+    username = forms.CharField(validators=[validate_username_is_not_aigerim],
+                               required=False, empty_value='unknown',
                                label='Dummy username')
     email = forms.EmailField(required=False, widget=BootstrapEmailWidget)
     datetime_test = forms.DateTimeField(widget=CustomDatetimeInput)
@@ -43,7 +17,8 @@ class DummyForm(forms.Form):
     # datetime_test = forms.DateTimeField(widget=forms.DateTimeInput(attrs={'type': 'date'}))
     movie = forms.ModelChoiceField(queryset=Movie.objects.all())
     movies = forms.ModelMultipleChoiceField(queryset=Movie.objects.all())
-    difficulty = forms.ChoiceField(choices=DIFFICULTY_CHOICES)
+    difficulty = forms.ChoiceField(choices=choices.DIFFICULTY_CHOICES,
+                                   initial=choices.DIFFICULTY_CHOICE_HARD)
 
     def clean_username(self):
         return self.cleaned_data['username'].capitalize()

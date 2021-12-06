@@ -1,0 +1,17 @@
+<div class="w-75 m-auto">
+    <table class="mt-5 table table-striped table-hover">
+        {% if table_head %}
+            <h5 class="mt-4">{{ table_head }}</h5>
+        {% endif %}
+        <tr>
+            <th>Name</th>
+            <th class="text-center">Age</th>
+        </tr>
+    {% for person in people %}
+        <tr>
+            <td><a href="{{ person.get_detail_url }}">{{ person.full_name }}</a></td>
+            <td class="text-center">{{ person.age }}</td>
+        </tr>
+    {% endfor %}
+    </table>
+</div>

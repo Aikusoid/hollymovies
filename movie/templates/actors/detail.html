@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block current_tab %}Actor's Detail - {{ actor.full_name }}{% endblock current_tab %}
+
+{% block body %}
+    <p><strong>First name:</strong> <em>{{ actor.first_name }}</em></p>
+    <p><strong>Last name:</strong> <em>{{ actor.last_name }}</em></p>
+    <p><strong>Age:</strong> {{ actor.age }}</p>
+    <div class="w-75 m-auto">
+    <table class="mt-5 table table-striped table-hover">
+        {% if table_head %}
+            <h5 class="mt-4">{{ table_head }}</h5>
+        {% endif %}
+        <tr>
+            <th>Name</th>
+            <th>Likes</th>
+        </tr>
+        {% for movie in actor.movies.all %}
+            <tr>
+                <td><a href="{% url 'movie:detail' movie.pk%}">{{ movie.name }}</a></td>
+                <td>{{ movie.likes }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+    </div>
+
+    {% if request.user.is_authenticated %}
+        <div class="text-center">
+            <a href="{% url 'actor:update' object.pk %}" class="btn btn-primary">Update</a>
+        </div>
+    {% endif %}
+{% endblock body %}

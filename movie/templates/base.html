@@ -5,36 +5,75 @@
     <meta charset="UTF-8">
     <title>Title</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <body>
-<div class="container">
-    <h1>HollyMovies - {% block current_tab %}{% endblock current_tab %}</h1>
-    <h4 class="pt-3">Application pages</h4>
-    <h5 class="links"><a href="{% url 'homepage' %}">Home</a></h5>
-    <h5 class="links"><a href="{% url 'cinema-list' %}">All cinemas</a></h5>
-    <h5 class="links"><a href="{% url 'movie-list' %}">All movies</a></h5>
-    <h5 class="links"><a href="{% url 'genre-list' %}">All genres</a></h5>
-    <h5 class="links"><a href="{% url 'actor-list' %}"> All actors</a></h5>
-    <h5 class="links"><a href="{% url 'director-list' %}"> All directors</a></h5>
-    <h5 class="links"><a href="{% url 'create-movie' %}">Create Movie</a></h5>
-    <h5 class="links"><a href="{% url 'create-actor' %}">Create Actor</a></h5>
-    <h4 class="pt-3">Dummy testing pages</h4>
-    <h5 class="links"><a href="{% url 'data-types-testing' %}"> Data types in templates</a></h5>
-    <h5 class="links"><a href="{% url 'dummy-form' %}">Dummy forms testing</a></h5>
-    <hr />
+    <nav class="navbar navbar-dark bg-dark">
+        <div class="container-fluid">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggleExternalContent" aria-controls="navbarToggleExternalContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span>Menu</span>
+            </button>
+        </div>
+    </nav>
+    <div class="collapse" id="navbarToggleExternalContent">
+        <div class="bg-dark p-3">
+            <h6 class="text-white-50 pt-2"><strong>Application pages</strong></h6>
+            <h6><a href="{% url 'homepage' %}" class="text-decoration-none">Home</a></h6>
 
-    {% if request.user.is_authenticated %}
-        {% if request.user.is_superuser %}
-            <h5 class="links">Username: <a href="{% url 'admin:index' %}">Admin</a></h5>
-        {% else %}
-            <h5>Username: {{ request.user.username }}</h5>
+            <h6 class="text-white-50 pt-2"><strong>Movies endpoints</strong></h6>
+            <h6><a href="{% url 'movie:list' %}" class="text-decoration-none">All movies</a></h6>
+            <h6><a href="{% url 'movie:create' %}" class="text-decoration-none">Create Movie</a></h6>
+
+            <h6 class="text-white-50 pt-2"><strong>Genre endpoints</strong></h6>
+            <h6><a href="{% url 'genre:list' %}" class="text-decoration-none">All genres</a></h6>
+
+            <h6 class="text-white-50 pt-2"><strong>Director endpoints</strong></h6>
+            <h6><a href="{% url 'director:list' %}" class="text-decoration-none"> All directors</a></h6>
+
+            <h6 class="text-white-50 pt-2"><strong>Actors endpoints</strong></h6>
+            <h6><a href="{% url 'actor:list' %}" class="text-decoration-none"> All actors</a></h6>
+            <h6><a href="{% url 'actor:create' %}" class="text-decoration-none">Create Actor</a></h6>
+
+            <h6 class="text-white-50 pt-2"><strong>Cinemas endpoints</strong></h6>
+            <h6><a href="{% url 'cinema:list' %}" class="text-decoration-none">All cinemas</a></h6>
+
+            <h6 class="text-white-50 pt-2"><strong>Dummy testing pages</strong></h6>
+            <h6><a href="{% url 'data-types-testing' %}" class="text-decoration-none"> Data types in templates</a></h6>
+            <h6><a href="{% url 'dummy-form' %}" class="text-decoration-none">Dummy forms testing</a></h6>
+
+            {% if request.user.is_authenticated %}
+                {% if request.user.is_superuser %}
+                    <h6 class="text-white-50 links pt-3">Username: <a href="{% url 'admin:index' %}" class="text-decoration-none">Admin</a></h6>
+                {% else %}
+                    <h6 class="text-white-50 links pt-3">Username: {{ request.user.username }}</h6>
+                {% endif %}
+            {% else %}
+                <h6 class="text-white-50 links pt-3">login</h6>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="container">
+        <h1 class="mt-5">HollyMovies - {% block current_tab %}{% endblock current_tab %}</h1>
+        <div class="container">
+        {% if messages %}
+            {% for message in messages %}
+                <div {% if message.tags == 'success' %}
+                    class='alert alert-success d-flex align-items-center alert-dismissible fade show'
+                {% elif message.tags == 'error' %}
+                    class="alert alert-danger d-flex align-items-center alert-dismissible fade show"
+                {% endif %}
+                >
+                    <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"><span></span></button>
+                    <strong>{{ message }}</strong>
+                </div>
+            {% endfor %}
         {% endif %}
-    {% else %}
-        <h5>login</h5>
-    {% endif %}
-    {% block body %}
-    {% endblock body %}
-</div>
+        </div>
+
+        {% block body %}
+        {% endblock body %}
+    </div>
 </body>
 </html>

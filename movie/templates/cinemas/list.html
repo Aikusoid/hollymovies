@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block current_tab %}All Cinemas{% endblock current_tab %}
+
+{% block body %}
+<div class="w-75 m-auto">
+    <table class="mt-5 table table-striped table-hover">
+        <h4 class="mt-5">Available showings</h4>
+        <tr>
+            <th>Cinema</th>
+            <th class="text-center">Location</th>
+        </tr>
+        {% for cinema in object_list %}
+            <tr>
+                <td><a href="{% url 'cinema:detail' cinema.pk %}">{{ cinema.name }}</a></td>
+                <td class="text-center">{{ cinema.location }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+</div>
+{% endblock %}

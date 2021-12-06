@@ -1,11 +1,12 @@
-from django.forms import Form
-from django.shortcuts import render, get_object_or_404, redirect
-from django.http import HttpResponse
+from django.contrib import messages
+from django.contrib.messages.views import SuccessMessageMixin
+from django.shortcuts import get_object_or_404, redirect
+from django.http import HttpResponseRedirect
 from django.urls import reverse_lazy, reverse
 from django.template.response import TemplateResponse
 from django.views import View
-from django.views.generic import ListView, TemplateView, FormView, CreateView, UpdateView
-from django.views.generic.detail import SingleObjectTemplateResponseMixin, BaseDetailView, DetailView
+from django.views.generic import ListView, TemplateView, FormView, CreateView, UpdateView, DeleteView
+from django.views.generic.detail import DetailView
 
 from movie.forms import DummyForm, MovieForm, ActorForm
 from movie.models import Movie, Genre, MovieLikeRegister, Actor, Director, Cinema, CinemaMovieShowings
@@ -20,14 +21,15 @@ def homepage_view(request):
         'most_liked_movie': Movie.objects.all().order_by('-likes').first(),
         'best_rated_movie': Movie.objects.all().order_by('-rating').first(),
     }
-    return TemplateResponse(request, 'homepage.html', context=context)
+    return TemplateResponse(request, 'generic/homepage.html', context=context)
+
 
 # def movie_list_view(request):
 #     context = {
 #         'movies': Movie.objects.all().order_by('-likes', '-rating'),
 #
 #     }
-#     return TemplateResponse(request, 'movieList.html', context=context)
+#     return TemplateResponse(request, 'list.html', context=context)
 
 
 class MovieListView(ListView):
@@ -35,15 +37,16 @@ class MovieListView(ListView):
     #     context = {
     #         'movies': Movie.objects.all().order_by('-likes', '-rating'),
     #     }
-    # return TemplateResponse(request, 'movieList.html', context=context)
+    # return TemplateResponse(request, 'list.html', context=context)
     queryset = Movie.objects.all().order_by('-likes', '-rating')
-    template_name = 'movieList.html'
+    template_name = 'movies/list.html'
+
 
 # def genre_list_view(request):
 #     context = {
 #         'genres': Genre.objects.all(),
 #     }
-#     return TemplateResponse(request, 'genreList.html', context=context)
+#     return TemplateResponse(request, 'list.html', context=context)
 
 
 class GenreListView(View):
@@ -53,21 +56,28 @@ class GenreListView(View):
         context = {
             'genres': Genre.objects.all(),
         }
-        return TemplateResponse(request, 'genreList.html', context=context)
+        return TemplateResponse(request, 'genres/list.html', context=context)
+
 
 # def actor_list_view(request):
-#     return TemplateResponse(request, 'actorList.html')
+#     return TemplateResponse(request, 'list.html')
 
 
 class ActorListView(TemplateView):
-    template_name = 'actorList.html'
+    template_name = 'actors/list.html'
+
 
 # def director_list_view(request):
-#     return TemplateResponse(request, 'directorList.html')
+#     return TemplateResponse(request, 'list.html')
 
 
 class DirectorListView(TemplateView):
-    template_name = 'directorList.html'
+    template_name = 'directors/list.html'
+
+
+class CinemaListView(ListView):
+    model = Cinema
+    template_name = 'cinemas/list.html'
 
 # def movie_detail_view(request, pk):
 #     movie = get_object_or_404(Movie, pk=pk)
@@ -90,12 +100,26 @@ class DirectorListView(TemplateView):
 #         'movie': movie,
 #         'already_liked': user_liked_movie,
 #     }
-#     return TemplateResponse(request, 'movieDetail.html', context=context)
+#     return TemplateResponse(request, 'detail.html', context=context)
+
+
+# def genre_detail_view(request, pk):
+#     context = {
+#         'genre': get_object_or_404(Genre, pk=pk),
+#     }
+#     return TemplateResponse(request, 'detail.html', context=context)
+
+
+# def director_detail_view(request, pk):
+#     context = {
+#         'director': get_object_or_404(Director, pk=pk),
+#     }
+#     return TemplateResponse(request, 'detail.html', context=context)
 
 
 class MovieDetailView(DetailView):
     model = Movie
-    template_name = 'movieDetail.html'
+    template_name = 'movies/detail.html'
 
     @property
     def user_already_liked(self):
@@ -125,38 +149,26 @@ class MovieDetailView(DetailView):
             )
             return self.get(request, *args, **kwargs)
 
-# def genre_detail_view(request, pk):
-#     context = {
-#         'genre': get_object_or_404(Genre, pk=pk),
-#     }
-#     return TemplateResponse(request, 'genreDetail.html', context=context)
-
 
 class GenreDetailView(DetailView):
     model = Genre
-    template_name = 'genreDetail.html'
-
-# def director_detail_view(request, pk):
-#     context = {
-#         'director': get_object_or_404(Director, pk=pk),
-#     }
-#     return TemplateResponse(request, 'directorDetail.html', context=context)
-
-
-class DirectorDetailView(DetailView):
-    model = Director
-    template_name = 'directorDetail.html'
+    template_name = 'genres/detail.html'
 
 # def actor_detail_view(request, pk):
 #     context = {
 #         'actor': get_object_or_404(Actor, pk=pk),
 #     }
-#     return TemplateResponse(request, 'actorDetail.html', context=context)
+#     return TemplateResponse(request, 'detail.html', context=context)
 
 
 class ActorDetailView(DetailView):
     model = Actor
-    template_name = 'actorDetail.html'
+    template_name = 'actors/detail.html'
+
+
+class DirectorDetailView(DetailView):
+    model = Director
+    template_name = 'directors/detail.html'
 
 # def dislike_movie_view(request, pk):
 #     movie = get_object_or_404(Movie, pk=pk)
@@ -165,55 +177,9 @@ class ActorDetailView(DetailView):
 #     return redirect('movie-detail', pk=pk)
 
 
-class DislikeMovieView(DetailView):
-    def get(self, request, *args, **kwargs):
-        pk = kwargs['pk']
-        movie = get_object_or_404(Movie, pk=pk)
-        movie.dislikes += 1
-        movie.save(update_fields=['dislikes'])
-        return redirect('movie-detail', pk=pk)
-
-# def testing_cheatsheet_view(request):
-#     # python list[0]
-#     # template language jinja2 list.0
-#
-#     # python dict['key']
-#     # template language jinja2 dict.key
-#     context = {
-#         'list': ['index0', 'index1'],
-#         'dict': {
-#             'key': 'value',
-#             'key2': 'value2',
-#         }
-#     }
-#     return TemplateResponse(request, 'dataTypesTesting.html', context=context)
-
-
-class TestingCheatSheetView(TemplateView):
-    template_name = 'dataTypesTesting.html'
-
-    # python list[0]
-    # template language jinja2 list.0
-
-    # python dict['key']
-    # template language jinja2 dict.key
-    extra_context = {
-        'list': ['index0', 'index1'],
-        'dict': {
-            'key': 'value',
-            'key2': 'value2',
-        }
-    }
-
-
-class CinemaListView(ListView):
-    model = Cinema
-    template_name = 'cinemaList.html'
-
-
 class CinemaDetailView(DetailView):
     model = Cinema
-    template_name = 'cinemaDetail.html'
+    template_name = 'cinemas/detail.html'
 
     def get_context_data(self, **kwargs):
         context = super(CinemaDetailView, self).get_context_data(**kwargs)
@@ -236,7 +202,7 @@ class CinemaDetailView(DetailView):
 
 class ShowingDetailView(DetailView):
     model = CinemaMovieShowings
-    template_name = 'showingDetail.html'
+    template_name = 'cinemas/showing_detail.html'
 
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
@@ -245,36 +211,45 @@ class ShowingDetailView(DetailView):
         return self.get(request, *args, *kwargs)
 
 
-class DummyFormView(FormView):
-    form_class = DummyForm
-    template_name = 'dummy_forms.html'
-    success_url = reverse_lazy('dummy-form')
-    initial = {'username': 'Honza'}
+class DislikeMovieView(DetailView):
+    def get(self, request, *args, **kwargs):
+        pk = kwargs['pk']
+        movie = get_object_or_404(Movie, pk=pk)
+        movie.dislikes += 1
+        movie.save(update_fields=['dislikes'])
+        return redirect('movie:detail', pk=pk)
 
-    def get_form_class(self, form_class=None):
-        return DummyForm(10, **self.get_form_kwargs())
-    
-    def form_valid(self, form):
-        int_field = form.cleaned_data['int_field']
-        username = form.cleaned_data['username']
-        email = form.cleaned_data['email']
-        datetime_test = form.cleaned_data['datetime_test']
-        movie = form.cleaned_data['movie']
-        movies = form.cleaned_data['movies']
-        difficulty = form.cleaned_data['difficulty']
-        print(int_field)
-        print(username)
-        print(email)
-        print(datetime_test)
-        print(movie)
-        print(movies)
-        print(difficulty)
-        
-        return super(DummyFormView, self).form_valid(form)
+# def testing_cheatsheet_view(request):
+#     # python list[0]
+#     # template language jinja2 list.0
+#
+#     # python dict['key']
+#     # template language jinja2 dict.key
+#     context = {
+#         'list': ['index0', 'index1'],
+#         'dict': {
+#             'key': 'value',
+#             'key2': 'value2',
+#         }
+#     }
+#     return TemplateResponse(request, 'data_types_testing.html', context=context)
 
-    def form_invalid(self, form):
-        print('Form is invalid!')
-        return super(DummyFormView, self).form_invalid(form)
+
+class TestingCheatSheetView(TemplateView):
+    template_name = 'generic/data_types_testing.html'
+
+    # python list[0]
+    # template language jinja2 list.0
+
+    # python dict['key']
+    # template language jinja2 dict.key
+    extra_context = {
+        'list': ['index0', 'index1'],
+        'dict': {
+            'key': 'value',
+            'key2': 'value2',
+        }
+    }
 
 # class DummyFormView(View):
 # 
@@ -308,26 +283,105 @@ class DummyFormView(FormView):
 #         return self.get(request, *args, **kwargs)
 
 
-class CreateMovieView(CreateView):
-    template_name = 'createMovie.html'
+class DummyFormView(FormView):
+    form_class = DummyForm
+    template_name = 'generic/dummy_forms.html'
+    success_url = reverse_lazy('dummy-form')
+    initial = {'username': 'Honza'}
+
+    def get_form(self, form_class=None):
+        return DummyForm(10, **self.get_form_kwargs())
+
+    def form_valid(self, form):
+        int_field = form.cleaned_data['int_field']
+        username = form.cleaned_data['username']
+        email = form.cleaned_data['email']
+        datetime_test = form.cleaned_data['datetime_test']
+        movie = form.cleaned_data['movie']
+        movies = form.cleaned_data['movies']
+        difficulty = form.cleaned_data['difficulty']
+        print(int_field)
+        print(username)
+        print(email)
+        print(datetime_test)
+        print(movie)
+        print(movies)
+        print(difficulty)
+
+        return super(DummyFormView, self).form_valid(form)
+
+    def form_invalid(self, form):
+        print('Form is invalid!')
+        return super(DummyFormView, self).form_invalid(form)
+
+
+class DeleteSuccessMixin:
+    success_message = ''
+
+    def get_success_message(self):
+        return self.success_message
+
+    def delete(self, request, *args, **kwargs):
+        super(DeleteSuccessMixin, self).delete(request, *args, **kwargs)
+
+        messages.success(request, self.get_success_message())
+
+        return HttpResponseRedirect(self.get_success_url())
+
+
+class CreateMovieView(SuccessMessageMixin, CreateView):
+    template_name = 'movies/create.html'
     form_class = MovieForm
+    success_message = 'Successfully created!'
 
     def get_success_url(self):
-        return reverse('movie-detail', args=[self.object.id])
+        return reverse('movie:detail', args=[self.object.id])
 
 
-class UpdateMovieView(UpdateView):
-    template_name = 'movieUpdate.html'
+class UpdateMovieView(SuccessMessageMixin, UpdateView):
+    template_name = 'movies/update.html'
     form_class = MovieForm
     model = Movie
+    success_message = 'Successfully updated!'
 
     def get_success_url(self):
-        return reverse('movie-detail', args=[self.object.id])
+        return reverse('movie:detail', args=[self.object.id])
 
 
-class CreateActorView(CreateView):
-    template_name = 'createActor.html'
+class MovieDeleteView(DeleteSuccessMixin, DeleteView):
+    model = Movie
+
+    def get_success_message(self):
+        return f'{self.object.name} successfully deleted!'
+
+    def get_success_url(self):
+        return reverse('movie:list')
+
+
+class CreateActorView(SuccessMessageMixin, CreateView):
+    template_name = 'actors/create.html'
     form_class = ActorForm
+    success_message = 'Successfully created!'
 
     def get_success_url(self):
-        return reverse('actor-detail', args=[self.object.id])
+        return reverse('actor:detail', args=[self.object.id])
+
+
+class UpdateActorView(SuccessMessageMixin, UpdateView):
+    template_name = 'actors/update.html'
+    form_class = ActorForm
+    model = Actor
+    success_message = 'Successfully updated!'
+
+    def get_success_url(self):
+        return reverse('actor:detail', args=[self.object.id])
+
+
+class ActorDeleteView(DeleteSuccessMixin, DeleteView):
+    model = Actor
+
+    def get_success_message(self):
+        return f'{self.object.full_name} successfully deleted!'
+
+    def get_success_url(self):
+        return reverse('actor:list')
