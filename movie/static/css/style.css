@@ -1,6 +1,7 @@
 body{
-background-image: linear-gradient(-20deg, #e9defa 0%, #fbfcdb 100%);
+    background-image: linear-gradient(160deg, #e9defa 0%, #fbfcdb 100%);
     color: rgba(0, 0, 0, 0.93);
+    min-height: 100%;
 }
 
 form{
