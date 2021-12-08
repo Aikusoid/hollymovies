@@ -5,7 +5,7 @@ from django.urls import reverse
 from django.views import View
 from django.views.generic import ListView, TemplateView, DetailView, CreateView, UpdateView, DeleteView
 
-from movie.forms import MovieForm, ActorForm
+from movie.forms import MovieForm, ActorForm, GenreForm, DirectorForm
 from movie.models import Movie, Genre, MovieLikeRegister, Actor, Director
 from movie.views.mixins import DeleteSuccessMixin
 
@@ -96,6 +96,35 @@ class GenreDetailView(DetailView):
     template_name = 'genres/detail.html'
 
 
+class GenreCreateView(SuccessMessageMixin, CreateView):
+    template_name = 'genres/create.html'
+    form_class = GenreForm
+    success_message = 'Successfully created!'
+
+    def get_success_url(self):
+        return reverse('genre:detail', args=[self.object.id])
+
+
+class GenreUpdateView(SuccessMessageMixin, UpdateView):
+    template_name = 'genres/update.html'
+    form_class = GenreForm
+    model = Genre
+    success_message = 'Successfully updated!'
+
+    def get_success_url(self):
+        return reverse('genre:detail', args=[self.object.id])
+
+
+class GenreDeleteView(DeleteSuccessMixin, DeleteView):
+    model = Genre
+
+    def get_success_message(self):
+        return f'Genre {self.object.name} successfully deleted!'
+
+    def get_success_url(self):
+        return reverse('genre:list')
+
+
 class ActorListView(TemplateView):
     template_name = 'actors/list.html'
 
@@ -141,6 +170,35 @@ class DirectorListView(TemplateView):
 class DirectorDetailView(DetailView):
     model = Director
     template_name = 'directors/detail.html'
+
+
+class DirectorCreateView(SuccessMessageMixin, CreateView):
+    template_name = 'directors/create.html'
+    form_class = DirectorForm
+    success_message = 'Successfully created!'
+
+    def get_success_url(self):
+        return reverse('actor:detail', args=[self.object.id])
+
+
+class DirectorUpdateView(SuccessMessageMixin, UpdateView):
+    template_name = 'directors/update.html'
+    form_class = DirectorForm
+    model = Director
+    success_message = 'Successfully updated!'
+
+    def get_success_url(self):
+        return reverse('director:detail', args=[self.object.id])
+
+
+class DirectorDeleteView(DeleteSuccessMixin, DeleteView):
+    model = Director
+
+    def get_success_message(self):
+        return f'{self.object.full_name} successfully deleted!'
+
+    def get_success_url(self):
+        return reverse('director:list')
 
 
 #########################

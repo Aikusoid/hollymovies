@@ -3,7 +3,7 @@ from django import forms
 from movie import choices
 from movie.forms.validators import validate_capitalized, validate_username_is_not_aigerim
 from movie.forms.widgets import CustomDatetimeInput, BootstrapEmailWidget
-from movie.models import Movie, Actor
+from movie.models import Movie, Actor, Genre, Director, Cinema
 
 
 class DummyForm(forms.Form):
@@ -29,6 +29,7 @@ class DummyForm(forms.Form):
         self.fields['movie'].queryset = queryset
         self.fields['movies'].queryset = queryset
 
+
 # class MovieForm(forms.Form):
 #     name = forms.CharField(max_length=512)
 #     description = forms.CharField(widget=forms.Textarea)
@@ -37,18 +38,6 @@ class DummyForm(forms.Form):
 #     rating = forms.FloatField(max_value=10, min_value=0, default=0)
 #     genre = forms.ModelChoiceField(required=False, queryset=Genre.objects.all())
 
-
-# class MovieForm(forms.ModelForm):
-#     class Meta:
-#         model = Movie
-#         # fields = '__all__'
-#         fields = ['name', 'description', 'rating', 'genre']
-#
-#
-# class ActorForm(forms.ModelForm):
-#     class Meta:
-#         model = Actor
-#         fields = '__all__'
 
 class MovieForm(forms.ModelForm):
     name = forms.CharField(max_length=512, validators=[validate_capitalized])
@@ -64,3 +53,26 @@ class ActorForm(forms.ModelForm):
         model = Actor
         fields = '__all__'
 
+
+class GenreForm(forms.ModelForm):
+    name = forms.CharField(max_length=512)
+
+    class Meta:
+        model = Genre
+        fields = '__all__'
+
+
+class DirectorForm(forms.ModelForm):
+    name = forms.CharField(max_length=512)
+
+    class Meta:
+        model = Director
+        fields = '__all__'
+
+
+class CinemaForm(forms.ModelForm):
+    name = forms.CharField(max_length=512)
+
+    class Meta:
+        model = Cinema
+        fields = '__all__'

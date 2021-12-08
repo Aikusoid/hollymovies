@@ -1,11 +1,15 @@
-from django.views.generic import ListView, DetailView
+from django.contrib.messages.views import SuccessMessageMixin
+from django.urls import reverse
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 
+from movie.forms import CinemaForm
 from movie.models import Cinema, CinemaMovieShowings
 
 
 ######################
 # Class based views #
 ######################
+from movie.views.mixins import DeleteSuccessMixin
 
 
 class CinemaListView(ListView):
@@ -34,6 +38,35 @@ class CinemaDetailView(DetailView):
             'showings': active_showings
         })
         return context
+
+
+class CinemaCreateView(SuccessMessageMixin, CreateView):
+    template_name = 'cinemas/create.html'
+    form_class = CinemaForm
+    success_message = 'Successfully created!'
+
+    def get_success_url(self):
+        return reverse('cinema:detail', args=[self.object.id])
+
+
+class CinemaUpdateView(SuccessMessageMixin, UpdateView):
+    template_name = 'cinemas/update.html'
+    form_class = CinemaForm
+    model = Cinema
+    success_message = 'Successfully updated!'
+
+    def get_success_url(self):
+        return reverse('cinema:detail', args=[self.object.id])
+
+
+class CinemaDeleteView(DeleteSuccessMixin, DeleteView):
+    model = Cinema
+
+    def get_success_message(self):
+        return f'{self.object.full_name} successfully deleted!'
+
+    def get_success_url(self):
+        return reverse('cinema:list')
 
 
 class ShowingDetailView(DetailView):

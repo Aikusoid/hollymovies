@@ -1,10 +1,12 @@
 from django.urls import path, include
 
-from movie.views.cinema import CinemaListView, CinemaDetailView, ShowingDetailView
+from movie.views.cinema import CinemaListView, CinemaDetailView, ShowingDetailView, CinemaCreateView, CinemaUpdateView, \
+    CinemaDeleteView
 from movie.views.generic import DislikeMovieView, homepage_view, TestingCheatSheetView, DummyFormView
 from movie.views.movie import MovieListView, MovieDetailView, MovieDeleteView, MovieUpdateView, MovieCreateView, \
     GenreDetailView, GenreListView, ActorDetailView, ActorListView, ActorDeleteView, ActorUpdateView, ActorCreateView, \
-    DirectorListView, DirectorDetailView
+    DirectorListView, DirectorDetailView, GenreCreateView, GenreUpdateView, GenreDeleteView, DirectorCreateView, \
+    DirectorUpdateView, DirectorDeleteView
 
 movie_urlpatterns = (
     [
@@ -21,7 +23,9 @@ genre_urlpatterns = (
     [
         path('detail/<int:pk>/', GenreDetailView.as_view(), name='detail'),
         path('list/', GenreListView.as_view(), name='list'),
-
+        path('create/', GenreCreateView.as_view(), name='create'),
+        path('update/<int:pk>/', GenreUpdateView.as_view(), name='update'),
+        path('delete/<int:pk>/', GenreDeleteView.as_view(), name='delete'),
     ], 'genre'
 )
 
@@ -39,16 +43,22 @@ director_urlpatterns = (
     [
         path('list/', DirectorListView.as_view(), name='list'),
         path('detail/<int:pk>/', DirectorDetailView.as_view(), name='detail'),
+        path('create/', DirectorCreateView.as_view(), name='create'),
+        path('update/<int:pk>/', DirectorUpdateView.as_view(), name='update'),
+        path('delete/<int:pk>/', DirectorDeleteView.as_view(), name='delete'),
     ], 'director'
 )
+
 
 cinema_urlpatterns = (
     [
         path('list/', CinemaListView.as_view(), name='list'),
         path('detail/<int:pk>/', CinemaDetailView.as_view(), name='detail'),
+        path('create/', CinemaCreateView.as_view(), name='create'),
+        path('update/<int:pk>/', CinemaUpdateView.as_view(), name='update'),
+        path('delete/<int:pk>/', CinemaDeleteView.as_view(), name='delete'),
     ], 'cinema'
 )
-
 showing_urlpatterns = (
     [
         path('detail/<int:pk>/', ShowingDetailView.as_view(), name='detail'),
