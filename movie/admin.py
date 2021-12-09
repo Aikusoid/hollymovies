@@ -23,7 +23,7 @@ class DirectorAdmin(admin.ModelAdmin):
 
 
 class CinemaAdmin(admin.ModelAdmin):
-    list_display = ['id', 'name', 'location']
+    list_display = ['id', 'name', 'location', 'finances']
 
 
 class CinemaMovieShowingsAdmin(admin.ModelAdmin):
@@ -36,7 +36,7 @@ class CinemaMovieShowingsAdmin(admin.ModelAdmin):
     def sold_out(obj):
         return obj.sold_out
 
-    list_display = ['cinema', 'movie', 'showing_time', 'duration', 'sold_out', 'sales_open', 'closed']
+    list_display = ['cinema', 'movie', 'showing_time', 'duration', 'numbers_of_tickets', 'available_tickets', 'sold_out', 'sales_open', 'closed']
 
 
 admin.site.register(Movie, MovieAdmin)

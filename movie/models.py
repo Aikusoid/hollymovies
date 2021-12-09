@@ -83,6 +83,7 @@ class Cinema(BaseModel):
     name = models.CharField(max_length=512)
     location = models.CharField(max_length=512)
     movie_showings = models.ManyToManyField(Movie, related_name='cinemas', through='movie.CinemaMovieShowings')
+    finances = models.FloatField(default=0)
 
     class Meta:
         unique_together = ('name', 'location')
@@ -110,7 +111,13 @@ class CinemaMovieShowings(BaseModel):
         return self.available_tickets <= 0
 
     @property
+    def earnings(self):
+        return self.sold_tickets * self.ticket_price
+
+    @property
     def closed(self):
         now = timezone.now()
         closed = now > (self.showing_time + timedelta(minutes=self.duration))
         return closed
+
+

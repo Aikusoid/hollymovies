@@ -9,51 +9,85 @@
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <body>
-    <nav class="navbar navbar-dark bg-dark">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container-fluid">
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggleExternalContent" aria-controls="navbarToggleExternalContent" aria-expanded="false" aria-label="Toggle navigation">
-                <span>Menu</span>
+            <a class="navbar-brand" href="{% url 'homepage' %}">HollyMovies</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
             </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Movies
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" href="{% url 'movie:list' %}">All Movies</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{% url 'movie:create' %}">Create Movie</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Genres
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" href="{% url 'genre:list' %}">All Genres</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{% url 'genre:create' %}">Create Genre</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Actors
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" href="{% url 'actor:list' %}">All Actors</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{% url 'actor:create' %}">Create Actor</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Directors
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" href="{% url 'director:list' %}">All Directors</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{% url 'director:create' %}">Create Director</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'cinema:list' %}">Cinemas</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Dummy testing pages
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" href="{% url 'data-types-testing' %}">Data types in templates</a></li>
+                            <li><a class="dropdown-item" href="{% url 'dummy-form' %}"></a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        {% if request.user.is_authenticated %}
+                            {% if request.user.is_superuser %}
+                                <a class="nav-link " href="{% url 'admin:index' %}">Admin</a>
+                            {% else %}
+                                <a class="nav-link" href='#'>{{ request.user.username }}</a>
+                            {% endif %}
+                            {% else %}
+                                <a class="nav-link" href='#'>Login</a>
+                        {% endif %}
+                    </li>
+                </ul>
+                <form class="d-flex">
+                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                    <button class="btn btn-outline-success" type="submit">Search</button>
+                </form>
+            </div>
         </div>
     </nav>
-    <div class="collapse" id="navbarToggleExternalContent">
-        <div class="bg-dark p-3">
-            <h6 class="text-white-50 pt-2"><strong>Application pages</strong></h6>
-            <h6><a href="{% url 'homepage' %}" class="text-decoration-none">Home</a></h6>
-
-            <h6 class="text-white-50 pt-2"><strong>Movies endpoints</strong></h6>
-            <h6><a href="{% url 'movie:list' %}" class="text-decoration-none">All movies</a></h6>
-            <h6><a href="{% url 'movie:create' %}" class="text-decoration-none">Create Movie</a></h6>
-
-            <h6 class="text-white-50 pt-2"><strong>Genre endpoints</strong></h6>
-            <h6><a href="{% url 'genre:list' %}" class="text-decoration-none">All genres</a></h6>
-
-            <h6 class="text-white-50 pt-2"><strong>Director endpoints</strong></h6>
-            <h6><a href="{% url 'director:list' %}" class="text-decoration-none"> All directors</a></h6>
-
-            <h6 class="text-white-50 pt-2"><strong>Actors endpoints</strong></h6>
-            <h6><a href="{% url 'actor:list' %}" class="text-decoration-none"> All actors</a></h6>
-            <h6><a href="{% url 'actor:create' %}" class="text-decoration-none">Create Actor</a></h6>
-
-            <h6 class="text-white-50 pt-2"><strong>Cinemas endpoints</strong></h6>
-            <h6><a href="{% url 'cinema:list' %}" class="text-decoration-none">All cinemas</a></h6>
-
-            <h6 class="text-white-50 pt-2"><strong>Dummy testing pages</strong></h6>
-            <h6><a href="{% url 'data-types-testing' %}" class="text-decoration-none"> Data types in templates</a></h6>
-            <h6><a href="{% url 'dummy-form' %}" class="text-decoration-none">Dummy forms testing</a></h6>
-
-            {% if request.user.is_authenticated %}
-                {% if request.user.is_superuser %}
-                    <h6 class="text-white-50 links pt-3">Username: <a href="{% url 'admin:index' %}" class="text-decoration-none">Admin</a></h6>
-                {% else %}
-                    <h6 class="text-white-50 links pt-3">Username: {{ request.user.username }}</h6>
-                {% endif %}
-            {% else %}
-                <h6 class="text-white-50 links pt-3">login</h6>
-            {% endif %}
-        </div>
-    </div>
-
     <div class="container">
         <h1 class="mt-5">HollyMovies - {% block current_tab %}{% endblock current_tab %}</h1>
         <div class="container">

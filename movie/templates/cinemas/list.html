@@ -10,11 +10,13 @@
         <tr>
             <th>Cinema</th>
             <th class="text-center">Location</th>
+            <th class="text-center">Finances</th>
         </tr>
         {% for cinema in object_list %}
             <tr>
                 <td><a href="{% url 'cinema:detail' cinema.pk %}">{{ cinema.name }}</a></td>
                 <td class="text-center">{{ cinema.location }}</td>
+                <td class="text-center">{{ cinema.finances }}</td>
             </tr>
         {% endfor %}
     </table>

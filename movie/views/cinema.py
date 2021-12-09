@@ -1,6 +1,8 @@
 from django.contrib.messages.views import SuccessMessageMixin
+from django.shortcuts import redirect
 from django.urls import reverse
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+from django.contrib import messages
 
 from movie.forms import CinemaForm
 from movie.models import Cinema, CinemaMovieShowings
@@ -30,8 +32,8 @@ class CinemaDetailView(DetailView):
         for showing in showings:
             if showing.closed:
                 continue
-            elif showing.sold_out:
-                continue
+            # elif showing.sold_out:
+            #     continue
             active_showings.append(showing)
 
         context.update({
@@ -69,12 +71,18 @@ class CinemaDeleteView(DeleteSuccessMixin, DeleteView):
         return reverse('cinema:list')
 
 
-class ShowingDetailView(DetailView):
+class ShowingDetailView(DetailView, SuccessMessageMixin):
     model = CinemaMovieShowings
     template_name = 'cinemas/showing_detail.html'
 
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
+        if self.object.available_tickets <= 0:
+            messages.error(request, 'No more tickets left. Please look for new showing.')
+            return redirect('cinema:detail')
         self.object.sold_tickets += 1
+        cinema = self.object.cinema
+        cinema.finances += self.object.ticket_price
+        cinema.save(update_fields=['finances', ])
         self.object.save(update_fields=['sold_tickets', ])
         return self.get(request, *args, *kwargs)
