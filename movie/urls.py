@@ -1,5 +1,6 @@
 from django.urls import path, include
 
+from movie.views.accounts import LoginView, LogoutView
 from movie.views.cinema import CinemaListView, CinemaDetailView, ShowingDetailView, CinemaCreateView, CinemaUpdateView, \
     CinemaDeleteView
 from movie.views.generic import DislikeMovieView, homepage_view, TestingCheatSheetView, DummyFormView
@@ -65,6 +66,13 @@ showing_urlpatterns = (
     ], 'showing'
 )
 
+auth_urlpatterns = (
+    [
+        path('login/', LoginView.as_view(), name='login'),
+        path('logout/', LogoutView.as_view(), name='logout'),
+    ], 'auth'
+)
+
 urlpatterns = [
     path('homepage/', homepage_view, name='homepage'),
     path('testing_data_types_in_templates/', TestingCheatSheetView.as_view(), name='data-types-testing'),
@@ -75,6 +83,7 @@ urlpatterns = [
     path('director/', include(director_urlpatterns)),
     path('cinema/', include(cinema_urlpatterns)),
     path('showing/', include(showing_urlpatterns)),
+    path('auth/', include(auth_urlpatterns)),
 ]
 
 

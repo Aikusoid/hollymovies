@@ -1,5 +1,6 @@
 from datetime import timedelta
 
+from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import User
 from django.db import models
 from django.shortcuts import reverse
@@ -119,5 +120,3 @@ class CinemaMovieShowings(BaseModel):
         now = timezone.now()
         closed = now > (self.showing_time + timedelta(minutes=self.duration))
         return closed
-
-

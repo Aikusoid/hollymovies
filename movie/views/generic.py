@@ -1,5 +1,6 @@
 from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
+from django.contrib.auth.decorators import login_required
 from django.views.generic import DetailView, FormView, TemplateView
 from django.urls import reverse_lazy
 
