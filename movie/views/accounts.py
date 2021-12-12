@@ -1,10 +1,34 @@
+from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
-from django.core.checks import messages
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.messages.views import SuccessMessageMixin
+from django.http import HttpResponse
 from django.shortcuts import redirect
+from django.template.response import TemplateResponse
+from django.urls import reverse_lazy
 from django.views import View
-from django.views.generic import TemplateView
-from django.views.generic.edit import FormMixin
+from django.views.generic import TemplateView, DetailView
+from django.views.generic.edit import FormMixin, UpdateView
 from django.contrib.auth.forms import AuthenticationForm
+
+from movie.forms.accounts import RegistrationForm, UserProfileForm
+from movie.models import UserProfile
+
+
+class RegistrationView(FormMixin, TemplateView):
+    template_name = 'accounts/registration.html'
+    form_class = RegistrationForm
+
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            user = form.save()
+            messages.success(request, f'{form.cleaned_data["username"]} created')
+            login(request, user)
+            return redirect('homepage')
+        else:
+            messages.error(request, 'Something wrong')
+            return TemplateResponse(request, 'accounts/registration.html', context={'form': form})
 
 
 class LoginView(FormMixin, TemplateView):
@@ -30,3 +54,22 @@ class LogoutView(View):
         logout(request)
         messages.success(request, 'Log out successfully')
         return redirect('homepage')
+
+
+class ProfileUpdateView(SuccessMessageMixin, UpdateView):
+    template_name = 'accounts/update.html'
+    form_class = RegistrationForm
+    model = UserProfile
+    success_message = 'Successfully updated!'
+
+    def get_success_url(self):
+        return redirect('homepage')
+
+
+class UpdateUserProfile(SuccessMessageMixin, LoginRequiredMixin, UpdateView):
+    template_name = 'accounts/update_profile.html'
+    form_class = UserProfileForm
+    model = UserProfile
+    success_message = 'Successfully updated profile'
+    success_url = reverse_lazy('homepage')
+    

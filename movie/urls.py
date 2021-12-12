@@ -1,6 +1,6 @@
 from django.urls import path, include
 
-from movie.views.accounts import LoginView, LogoutView
+from movie.views.accounts import LoginView, LogoutView, RegistrationView, ProfileUpdateView
 from movie.views.cinema import CinemaListView, CinemaDetailView, ShowingDetailView, CinemaCreateView, CinemaUpdateView, \
     CinemaDeleteView
 from movie.views.generic import DislikeMovieView, homepage_view, TestingCheatSheetView, DummyFormView
@@ -70,8 +70,12 @@ auth_urlpatterns = (
     [
         path('login/', LoginView.as_view(), name='login'),
         path('logout/', LogoutView.as_view(), name='logout'),
+        path('register/', RegistrationView.as_view(), name='register'),
+        path('update/<int:pk>/', ProfileUpdateView.as_view, name='update'),
     ], 'auth'
 )
+
+
 
 urlpatterns = [
     path('homepage/', homepage_view, name='homepage'),

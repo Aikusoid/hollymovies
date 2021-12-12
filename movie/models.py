@@ -1,5 +1,6 @@
 from datetime import timedelta
 
+from django.contrib.auth import get_user_model
 from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import User
 from django.db import models
@@ -120,3 +121,8 @@ class CinemaMovieShowings(BaseModel):
         now = timezone.now()
         closed = now > (self.showing_time + timedelta(minutes=self.duration))
         return closed
+
+
+class UserProfile(BaseModel):
+    user = models.OneToOneField(get_user_model(), on_delete=models.CASCADE, related_name='profile')
+    image = models.ImageField(null=True, blank=True, upload_to='profile_images')
